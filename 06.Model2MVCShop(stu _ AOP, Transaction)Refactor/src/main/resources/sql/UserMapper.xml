@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--	
+	UserMapper.xml :: SQL 를 갖는 MetaData 
+	
+	- MyBatis Framework 은 XML MetaData 를 사용 SQL구문을 관리
+	  (SQL은 xml 을 통해 적절히 캡슐화 되어 애플리케이선 외부로 분리함)
+	- SQL문의 입력(?) / 출력(?)을 매핑한다.  <== 아래의 select element 참조
+ -->		
+ 					
+<mapper namespace="UserMapper">
+
+	<!-- 위의  namespace 이용 Application 에서 UserMapper.~~ 로 아래의 SQL 을 참조  
+	 	  :: 아래의 query 수행 후 결과 resultType 에 선언된 User Domain Object 
+	 	   	  Field ( property )에 자동연결(?,바인딩)
+	 	  :: SQL / Query 의 Alias 와 User Domain Object 의 Field 이름 동일한 것 확인.  -->
+
+  	<resultMap id="userSelectMap" type="com.model2.mvc.service.domain.User">
+  		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+  		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+  		<result property="password" column="password" jdbcType="VARCHAR"/>
+  		<result property="role" column="role" jdbcType="VARCHAR"/>
+  		<result property="ssn" column="ssn" jdbcType="VARCHAR"/>
+  		<result property="phone" column="cell_phone" jdbcType="VARCHAR"/>
+  		<result property="addr" column="addr" jdbcType="VARCHAR"/>
+  		<result property="email" column="email" jdbcType="VARCHAR"/>
+  		<result property="regDate" column="reg_date" jdbcType="DATE"/>
+  	</resultMap>
+  	
+  	<insert id="addUser" parameterType="com.model2.mvc.service.domain.User">
+  		INSERT INTO USERS(user_id, user_name, password, role, ssn, cell_phone, addr, email, reg_date)
+  		VALUES ( #{userId:VARCHAR}, 
+  				#{userName:VARCHAR},
+  				#{password:VARCHAR},
+  				'user',
+  				#{ssn:VARCHAR},
+  				#{phone:VARCHAR},
+  				#{addr:VARCHAR},
+  				#{email:VARCHAR},
+  				SYSDATE )
+  	</insert>
+  	  	
+  	<select id="findUser" parameterType="java.lang.String" resultMap="userSelectMap">
+  		SELECT user_id, user_name, password, role, cell_phone, addr, email, reg_date
+  		FROM users
+  		WHERE user_id = #{userId}
+  	</select>
+  	
+	<select id="totalCount" parameterType="com.model2.mvc.common.Search" resultType="Integer">
+		SELECT COUNT(*)
+		FROM ( SELECT user_id, user_name, email
+				FROM users
+				<if test="searchCondition != null">
+					<if test="searchCondition == '0' and searchKeyword != ''">
+						WHERE user_id = #{searchKeyword}
+					</if>
+					<if test="searchCondition == '1' and searchKeyword != ''">
+						WHERE user_name = #{searchKeyword}
+					</if>
+				</if>			
+		ORDER BY user_id ) countTable
+	</select>	
+		
+	<select id="allUser" parameterType="com.model2.mvc.common.Search"  resultMap="userSelectMap">
+		SELECT *
+		FROM ( SELECT inner_table. *, ROWNUM AS row_seq
+				FROM ( SELECT user_id, user_name, email
+						FROM users
+						<if test="searchCondition != null">
+							<if test="searchCondition == '0' and searchKeyword != ''">
+								WHERE user_id = #{searchKeyword}
+							</if>
+							<if test="searchCondition == '1' and searchKeyword != ''">
+								WHERE user_name = #{searchKeyword}
+							</if>
+						</if>			
+						ORDER BY user_id ) inner_table
+				WHERE ROWNUM <![CDATA[ <= ]]> #{curruntPage}*#{pageSize} )
+		WHERE row_seq BETWEEN ((#{curruntPage}-1)*#{pageSize}+1) AND #{curruntPage}*#{pageSize}
+	</select>
+		
+	<update id="updateUser" parameterType="com.model2.mvc.service.domain.User">
+		UPDATE users SET user_name = #{userName}, cell_phone = #{phone:VARCHAR}, addr = #{addr:VARCHAR}, email = #{email:VARCHAR} WHERE user_id = #{userId}
+	</update>
+  	
+</mapper>
+
+
