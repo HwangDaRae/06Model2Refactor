@@ -79,8 +79,8 @@
 							</if>
 						</if>			
 						ORDER BY user_id ) inner_table
-				WHERE ROWNUM <![CDATA[ <= ]]> #{curruntPage}*#{pageSize} )
-		WHERE row_seq BETWEEN ((#{curruntPage}-1)*#{pageSize}+1) AND #{curruntPage}*#{pageSize}
+				WHERE ROWNUM <![CDATA[ <= ]]> #{currentPage}*#{pageSize} )
+		WHERE row_seq BETWEEN ((#{currentPage}-1)*#{pageSize}+1) AND #{currentPage}*#{pageSize}
 	</select>
 		
 	<update id="updateUser" parameterType="com.model2.mvc.service.domain.User">

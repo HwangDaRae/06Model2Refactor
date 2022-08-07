@@ -44,7 +44,7 @@ function purchaseFinish(){
 			<table id="dataTable" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
 				<tr>
 					<td colspan="11">
-						총 ${ fn:length(list) } 개의 상품선택&nbsp;&nbsp;&nbsp;&nbsp;
+						총 <%-- ${ fn:length(list) } --%> ${ count } 개의 상품선택&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="button" value="결제완료" onclick="purchaseFinish()">
 					</td>
 
@@ -64,8 +64,8 @@ function purchaseFinish(){
 					<td colspan="11" bgcolor="808285" height="1"></td>
 				</tr>
 					<!-- list시작 -->
-					<c:set var="size" value="${ fn:length(purList) }"/>
-					<c:if test="${ fn:length(purList) > 0 }">
+					<c:set var="size" value="<%-- ${ fn:length(purList) } --%>${ count }"/>
+					<c:if test="<%-- ${ fn:length(purList) > 0 } --%>${ count > 0 }">
 						<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
 						
 							<input type="text" name="productNo" value="${ purList[i].purchaseProd.prodNo }">

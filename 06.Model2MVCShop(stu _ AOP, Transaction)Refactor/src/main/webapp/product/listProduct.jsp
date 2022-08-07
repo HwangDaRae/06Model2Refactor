@@ -114,12 +114,12 @@ function fncGetSortList(priceSort) {
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
 
-	<c:set var="size" value="${ fn:length(list) }" />
+	<c:set var="size" value="<%-- ${ fn:length(list) } --%>${ listSize }" />
 
 	<c:if test="${ !empty sessionScope.user && sessionScope.user.role == 'admin' }">
-		<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
+		<c:forEach var="i" begin="0" end="${ listSize-1 }" step="1">
 			<tr class="ct_list_pop">
-				<td align="center">${ size-i }</td>
+				<td align="center">${ listSize-i }</td>
 				<td></td>
 					<td align="left">
 						<!-- 판매코드가 0이 아니면 상품수정 불가 -->
@@ -155,9 +155,9 @@ function fncGetSortList(priceSort) {
 	</c:if>
 	<!-- 회원, 비회원 -->
 	<c:if test="${ sessionScope.user.role != 'admin' }">
-		<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
+		<c:forEach var="i" begin="0" end="${ listSize-1 }" step="1">
 			<tr class="ct_list_pop">
-				<td align="center">${ size-i }</td>
+				<td align="center">${ listSize-i }</td>
 				<td></td>
 					<td align="left">
 						<c:if test="${ fn:trim(list[i].proTranCode) == '0' }">
@@ -193,7 +193,7 @@ function fncGetSortList(priceSort) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
 	<tr>
 		<td align="center">
-			<input type="hidden" name="currentPage" id="currentPage" value=""/>
+			<input type="hidden" name="currentPage" id="currentPage" value="0"/>
 			<jsp:include page="../common/pageNavigator.jsp"/>
     	</td>
 	</tr>

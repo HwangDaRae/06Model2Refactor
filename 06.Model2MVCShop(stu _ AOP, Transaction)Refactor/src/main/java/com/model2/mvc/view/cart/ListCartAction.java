@@ -127,16 +127,15 @@ public class ListCartAction extends Action {
 			request.setAttribute("count", proList.size());
 		}else {
 			CartService service = new CartServiceImpl();
-			Map<String, Object> map = service.getCartList(user.getUserId());
+			List<Cart> list = service.getCartList(user.getUserId());
 			
-			ArrayList<Cart> list = (ArrayList<Cart>)map.get("list");
 			for (int i = 0; i < list.size(); i++) {
 				System.out.println(list.get(i).toString());
 			}
 			
-			request.setAttribute("list", map.get("list"));
+			request.setAttribute("list", list);
 			//count : 게시물 수, listCart.jsp에서 count>0일때 for문으로 list출력
-			request.setAttribute("count", map.get("count") );
+			request.setAttribute("count", list.size());
 		}
 		
 		System.out.println("[ListCartAction execute() end...]");

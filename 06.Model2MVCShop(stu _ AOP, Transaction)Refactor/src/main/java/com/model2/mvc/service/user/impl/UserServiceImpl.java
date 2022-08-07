@@ -1,7 +1,6 @@
 package com.model2.mvc.service.user.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,11 +25,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void addUser(User user) throws Exception {
 		userDao.addUser(user);
-		userDao.addUser(user);
 	}
 
 	@Override
 	public User loginUser(User userVO) throws Exception {
+		System.out.println(getClass().getName() + ".loginUser(User userVO)");
 		return userDao.loginUser(userVO);
 	}
 

@@ -1,10 +1,6 @@
 package com.model2.mvc.service.product.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +44,10 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
-	public Map<String, Object> getProductList(Search searchVO) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<Product> list = (List)sqlSession.selectList("ProductMapper.allProduct", searchVO);
-		map.put("list", list);
-		return map;
+	public List<Product> getProductList(Search searchVO) throws Exception {
+		System.out.println(getClass() + ".getProductList(SearchVO searchVO)");
+		System.out.println(searchVO);
+		return sqlSession.selectList("ProductMapper.allProduct", searchVO);
 	}
 
 	@Override

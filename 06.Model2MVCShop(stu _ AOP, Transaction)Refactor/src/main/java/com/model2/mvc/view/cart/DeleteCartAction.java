@@ -2,6 +2,7 @@ package com.model2.mvc.view.cart;
 
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.model2.mvc.framework.Action;
 import com.model2.mvc.service.cart.CartService;
 import com.model2.mvc.service.cart.impl.CartServiceImpl;
+import com.model2.mvc.service.domain.Cart;
 import com.model2.mvc.service.domain.User;
 
 public class DeleteCartAction extends Action {
@@ -65,11 +67,11 @@ public class DeleteCartAction extends Action {
 			//장바구니에서 상품을 삭제하고 삭제한 list를 가져온다
 			CartService service = new CartServiceImpl();
 			service.deleteCart(map);
-			map = service.getCartList( ( (User)request.getSession(true).getAttribute("user") ).getUserId() );
+			List<Cart> list = service.getCartList( ( (User)request.getSession(true).getAttribute("user") ).getUserId() );
 			
-			request.setAttribute("list", map.get("list"));
+			request.setAttribute("list", list);
 			//count : 게시물 수, listCart.jsp에서 count>0일때 for문으로 list출력
-			request.setAttribute("count", map.get("count"));
+			request.setAttribute("count", list.size());
 		}
 		
 		System.out.println("[DeleteCartAction execute() end...]");

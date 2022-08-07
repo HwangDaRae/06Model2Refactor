@@ -27,7 +27,7 @@ public class ListUserAction extends Action {
 			curruntPage=Integer.parseInt(request.getParameter("currentPage"));
 		}
 		
-		search.setCurruntPage(curruntPage);
+		search.setCurrentPage(curruntPage);
 		search.setSearchCondition(request.getParameter("searchCondition"));
 		search.setSearchKeyword(request.getParameter("searchKeyword"));
 		

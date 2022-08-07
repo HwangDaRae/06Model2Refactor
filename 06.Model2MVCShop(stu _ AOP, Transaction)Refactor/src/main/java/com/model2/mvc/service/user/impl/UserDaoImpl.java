@@ -30,13 +30,13 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User loginUser(User userVO) throws Exception {
-		User dbUser=(User)sqlSession.selectList("UserMapper.getUser", userVO.getUserId());
+		List<User> userList =(List)sqlSession.selectList("UserMapper.findUser", userVO.getUserId());
 
 		//아이디로 찾은 db정보의 비밀번호와 사용자가 입력한 비밀번호가 일치하는지 확인
-		if(! dbUser.getPassword().equals(userVO.getPassword()))
+		if(! userList.get(0).getPassword().equals(userVO.getPassword()))
 			throw new Exception("로그인에 실패했습니다.");
 		
-		return dbUser;
+		return userList.get(0);
 	}
 
 	@Override

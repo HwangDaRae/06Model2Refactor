@@ -1,6 +1,6 @@
 package com.model2.mvc.service.product.impl;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Map<String, Object> getProductList(Search searchVO) throws Exception {
+	public List<Product> getProductList(Search searchVO) throws Exception {
 		System.out.println("ProductServiceImpl getProductList(SearchVO searchVO)");		
 		return productDAO.getProductList(searchVO);
 	}

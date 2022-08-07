@@ -54,22 +54,22 @@
 				WHERE r = 1
 		<if test="searchCondition != null and searchKeyword != ''">
 			<if test="searchCondition == 0">
-				AND p.PROD_NO=#{searchKeyword}
+				AND PROD_NO=#{searchKeyword}
 			</if>
 			<if test="searchCondition == 1">
-				AND UPPER(p.PROD_NAME) LIKE UPPER('%#{searchKeyword}%')
+				AND PROD_NAME LIKE '%'||#{searchKeyword}||'%'
 			</if>
 			<if test="searchCondition == 2">
-				AND p.PRICE=#{searchKeyword}
+				AND PRICE=#{searchKeyword}
 			</if>
 		</if>
-		<choose>
-			<when test="priceSort != null and priceSort !=''">
+		<!-- <choose>
+			<when test="priceSort != null">
 				ORDER BY price #{priceSort}
 			</when>
-		</choose>
+		</choose> -->
 		)
-		<!-- <if test="priceSort != null AND priceSort !=''">
+		<!-- <if test="priceSort != null">
 			ORDER BY price #{priceSort}
 		</if> -->
 	</select>
@@ -80,29 +80,28 @@
 	SELECT *
 	FROM ( SELECT ROWNUM AS row_n, vt1.*
 			FROM ( SELECT vt.* 
-					FROM ( SELECT ROW_NUMBER() OVER(PARTITION BY p.prod_no ORDER BY t.order_data desc) as r, p.amount, p.prod_no, p.prod_name, p.price, p.reg_date, nvl(tran_status_code, 0) as tcode
+					FROM ( SELECT ROW_NUMBER() OVER(PARTITION BY p.prod_no ORDER BY t.order_data desc) as r, p.amount, p.prod_no, p.prod_name, p.price, p.reg_date, nvl(tran_status_code, 0) as proTranCode
 							FROM transaction t, product p 
 							WHERE t.prod_no(+)=p.prod_no ) vt 
 			 		WHERE r = 1
 					<if test="searchCondition != null and searchKeyword != ''">
 						<if test="searchCondition == 0">
-							AND p.PROD_NO=#{searchKeyword}
+							AND PROD_NO=#{searchKeyword}
 						</if>
 						<if test="searchCondition == 1">
-							AND UPPER(p.PROD_NAME) LIKE UPPER('%" + #{searchKeyword} + "%')
+							AND PROD_NAME LIKE '%'||#{searchKeyword}||'%'
 						</if>
 						<if test="searchCondition == 2">
-							AND p.PRICE=#{searchKeyword}
+							AND PRICE=#{searchKeyword}
 						</if>
 					</if>
-					<choose>
-						<when test="priceSort != null and priceSort !=''">
-							ORDER BY price #{priceSort}
-						</when>
-					</choose>
+					
+					<!-- <if test="priceSort != null">
+					ORDER BY PRICE #{priceSort}
+					</if> -->
 				) vt1
 			) vt2
-		WHERE row_n BETWEEN ((#{curruntPage}-1)*#{pageSize}+1) AND #{curruntPage}*#{pageSize}
+		WHERE row_n BETWEEN ((#{currentPage}-1)*#{pageSize}+1) AND #{currentPage}*#{pageSize}
 	</select>
 		
 		

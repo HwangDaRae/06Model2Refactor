@@ -69,7 +69,7 @@
 						FROM transaction
 						WHERE buyer_id=#{userId}
 						ORDER BY order_data DESC ) vt1 ) vt2
-		WHERE r BETWEEN ((#{search.curruntPage}-1)*#{search.pageSize}+1) AND #{search.curruntPage}*#{search.pageSize}
+		WHERE r BETWEEN ((#{search.currentPage}-1)*#{search.pageSize}+1) AND #{search.currentPage}*#{search.pageSize}
 	</select>
 	
 
