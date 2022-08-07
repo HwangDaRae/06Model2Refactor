@@ -94,7 +94,7 @@
 
 
 				
-	<update id="updateTranCode" parameterType="com.model2.mvc.service.domain.Purchase">
+	<update id="updateTranCode" parameterType="map">
 		UPDATE transaction
 		<set>
 			tran_status_code=#{tranCode}
@@ -104,10 +104,10 @@
 			<if test="tranNo != 0">
 				tran_no=#{tranNo}
 			</if>
-			<!-- admin계정 : 구매완료->배송중 : 상품번호, 상태코드=2 -->
-			<if test="purchaseProd.prodNo != 0">
-				prod_no=#{purchaseProd.prodNo}
+			<if test="prodNo != 0">
+				prod_no=#{prodNo}
 			</if>
+			<!-- admin계정 : 구매완료->배송중 : 상품번호, 상태코드=2 -->
 		</where>
 	</update>
 

@@ -70,8 +70,8 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	}
 
 	@Override
-	public void updateTranCode(Purchase purchaseVO) throws Exception {
-		sqlSession.update("PurchaseMapper.updateTranCode", purchaseVO);
+	public void updateTranCode(Map<String, Object> map) throws Exception {
+		sqlSession.update("PurchaseMapper.updateTranCode", map);
 	}
 
 	@Override

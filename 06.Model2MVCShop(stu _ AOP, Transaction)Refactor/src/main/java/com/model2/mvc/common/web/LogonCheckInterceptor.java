@@ -60,15 +60,14 @@ public class LogonCheckInterceptor extends HandlerInterceptorAdapter {
 			return true;
 		} else { // ==> 미 로그인한 화원이라면...
 				// ==> 로그인 시도 중.....		
-			System.out.println("여기는 비회원");	
+			System.out.println("여기는 비회원");
 			String uri = request.getRequestURI();
 			if (uri.indexOf("addUserView") != -1 || uri.indexOf("addUser") != -1 || uri.indexOf("loginView") != -1 || uri.indexOf("login") != -1 || uri.indexOf("checkDuplication") != -1) {
 				System.out.println("[ 로그 시도 상태 .... ]");
 				System.out.println("[ LogonCheckInterceptor end........]\n");
 				return true;
-			}else if(uri.indexOf("listProduct") != -1 && ((User)session.getAttribute("user")).getUserId().equals("non-member") ) {
-				System.out.println("[ 비회원 상품 검색 ]");
-				//request.getRequestDispatcher("/listProduct.do").forward(request, response);
+			}else if(uri.indexOf("listProduct") != -1 || uri.indexOf("getProduct") != -1 || uri.indexOf("addCart") != -1) {
+				System.out.println("[ 비회원 ]");
 				return true;
 			}
 

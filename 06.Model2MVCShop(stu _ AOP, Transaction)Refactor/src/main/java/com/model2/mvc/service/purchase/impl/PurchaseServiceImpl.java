@@ -68,9 +68,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 	}
 
 	@Override
-	public void updateTranCode(Purchase purchaseVO) throws Exception {
+	public void updateTranCode(Map<String, Object> map) throws Exception {
 		System.out.println("PurchaseServiceImpl updateTranCode(PurchaseVO purchaseVO) start...");
-		purchaseDao.updateTranCode(purchaseVO);
+		purchaseDao.updateTranCode(map);
 	}
 
 }

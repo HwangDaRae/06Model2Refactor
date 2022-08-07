@@ -71,6 +71,10 @@ public class TestMVCShop {
 	
 	@Test
 	public void testProduct() throws Exception {
+		String str = "123456789";
+		System.out.println(str.indexOf("456"));
+		System.out.println(str.subSequence(2, 4));
+		
 		System.out.println("\n===================================");
 		Product product = new Product(0, "Ç³°æ", "»ó¼¼Ç³°æ", "2022-07-30", 461000, "/images/uploadFiles/test2.jpg", null, 27);
 		Search search = new Search(2, null, null, 3, null);
