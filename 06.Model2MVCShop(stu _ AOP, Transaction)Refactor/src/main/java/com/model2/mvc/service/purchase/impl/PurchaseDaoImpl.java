@@ -29,8 +29,7 @@ public class PurchaseDaoImpl implements PurchaseDao {
 		System.out.println("PurchaseDAOImpl addPurchase(Purchase purchaseVO, Product productVO)");
 		int i = sqlSession.insert("PurchaseMapper.addPurchase", purchase);
 		if(i==1) {
-			//return (Purchase)sqlSession.selectList("PurchaseMapper.findPurchase", purchase.getTranNo());
-			return purchase;
+			return (Purchase)sqlSession.selectList("PurchaseMapper.findPurchase", purchase.getTranNo());
 		}else {
 			return null;
 		}
@@ -40,6 +39,11 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	public Purchase getPurchase(int tranNo) throws Exception {
 		System.out.println("PurchaseDaoImpl getPurchase(int tranNo) start...");
 		return sqlSession.selectOne("PurchaseMapper.findPurchase", tranNo);
+	}
+
+	@Override
+	public List<Purchase> getPurchaseFromTranId(String tranId) throws Exception {
+		return sqlSession.selectList("PurchaseMapper.findPurchaseFromTranId", tranId);
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	public Purchase updatePurchase(Purchase purchaseVO) throws Exception {
 		int i = sqlSession.update("PurchaseMapper.updatePurchase", purchaseVO);
 		if(i==1) {
-			return (Purchase)sqlSession.selectList("PurchaseMapper.findPurchase", purchaseVO.getTranNo());
+			return sqlSession.selectOne("PurchaseMapper.findPurchase", purchaseVO.getTranNo());
 		}else {
 			return null;
 		}

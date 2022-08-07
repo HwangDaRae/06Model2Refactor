@@ -114,12 +114,12 @@ function fncGetSortList(priceSort) {
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
 
-	<c:set var="size" value="<%-- ${ fn:length(list) } --%>${ listSize }" />
+	<c:set var="size" value="${ fn:length(list) }" />
 
 	<c:if test="${ !empty sessionScope.user && sessionScope.user.role == 'admin' }">
-		<c:forEach var="i" begin="0" end="${ listSize-1 }" step="1">
+		<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
 			<tr class="ct_list_pop">
-				<td align="center">${ listSize-i }</td>
+				<td align="center">${ size-i }</td>
 				<td></td>
 					<td align="left">
 						<!-- 판매코드가 0이 아니면 상품수정 불가 -->
@@ -137,7 +137,7 @@ function fncGetSortList(priceSort) {
 					<c:if test="${ fn:trim(list[i].proTranCode) == '1' }">
 						구매완료
 						<c:if test="${ menu == 'manage' }">
-							-<a href="/updateTranCodeByProd.do?prodNo=${ list[i].prodNo }&currentPage=${ resultPage.currentPage }&tanscode=2&menu=${ menu }">배송하기</a>
+							-<a href="/updateTranCodeByProd.do?prodNo=${ list[i].prodNo }&currentPage=${ resultPage.currentPage }&tranCode=2&menu=${ menu }">배송하기</a>
 						</c:if>
 					</c:if>
 					<c:if test="${ fn:trim(list[i].proTranCode) == '2' }">

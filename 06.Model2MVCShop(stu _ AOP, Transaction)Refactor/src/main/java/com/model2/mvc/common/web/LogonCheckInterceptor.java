@@ -35,35 +35,32 @@ public class LogonCheckInterceptor extends HandlerInterceptorAdapter {
 		// ==> 로그인 유무확인
 		HttpSession session = request.getSession(true);
 		User user = (User) session.getAttribute("user");
+		if(user == null) {
+			user = new User();
+			user.setUserId("non-member");
+			session.setAttribute("user", user);
+		}
 		
 		System.out.println(handler);
 
 		// ==> 로그인한 회원이라면...
-		if (user != null) {
+		if ( !((User)session.getAttribute("user")).getUserId().equals("non-member")) {
 			// ==> 로그인 상태에서 접근 불가 URI
+			System.out.println("여기는 회원 관리자");
 			String uri = request.getRequestURI();
 			if (uri.indexOf("addUserView") != -1 || uri.indexOf("addUser") != -1 || uri.indexOf("loginView") != -1 || uri.indexOf("login") != -1 || uri.indexOf("checkDuplication") != -1) {
 				request.getRequestDispatcher("/index.jsp").forward(request, response);
 				System.out.println("[ 로그인 상태.. 로그인 후 불필요 한 요구.... ]");
 				System.out.println("[ LogonCheckInterceptor end........]\n");
 				return false;
-			}else if(uri.indexOf("listProduct") != -1 ) {
-				System.out.println("[ 회원 상품 검색 ]");
-				//request.getRequestDispatcher("/listProduct.do").forward(request, response);
-				return true;
 			}
 
 			System.out.println("[ 로그인 상태 ... ]");
 			System.out.println("[ LogonCheckInterceptor end........]\n");
 			return true;
 		} else { // ==> 미 로그인한 화원이라면...
-				// ==> 로그인 시도 중.....
-			if(user == null) {
-				user = new User();
-				user.setUserId("non-member");
-				session.setAttribute("user", user);
-			}
-			
+				// ==> 로그인 시도 중.....		
+			System.out.println("여기는 비회원");	
 			String uri = request.getRequestURI();
 			if (uri.indexOf("addUserView") != -1 || uri.indexOf("addUser") != -1 || uri.indexOf("loginView") != -1 || uri.indexOf("login") != -1 || uri.indexOf("checkDuplication") != -1) {
 				System.out.println("[ 로그 시도 상태 .... ]");

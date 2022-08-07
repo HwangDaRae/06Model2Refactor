@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
@@ -19,6 +21,7 @@ import com.model2.mvc.common.util.CommonUtil;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
+import com.model2.mvc.service.product.impl.ProductServiceImpl;
 
 @Controller
 public class ProductController {
@@ -83,86 +86,63 @@ public class ProductController {
 		for (int i = 0; i < prodList.size(); i++) {
 			System.out.println(getClass() + " : " + prodList.get(i).toString());
 		}
-
-		request.setAttribute("resultPage", resultPage);
-		request.setAttribute("searchVO", search);
-		request.setAttribute("list", prodList);
-		request.setAttribute("listSize", prodList.size());
-		request.setAttribute("menu", menu);
+		
+		model.addAttribute("resultPage", resultPage);
+		model.addAttribute("searchVO", search);
+		model.addAttribute("list", prodList);
+		model.addAttribute("listSize", prodList.size());
+		model.addAttribute("menu", menu);
 		
 		return "forward:/product/listProduct.jsp";
 	}
 	
-	
-
-	/*
-	@Override
-	public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		System.out.println("[ListProductAction execute() start...]");
-		
-		// 비회원인지 회원인지 구분
-		if((User)request.getSession(true).getAttribute("user") == null) {
-			User user = new User();
-			user.setUserId("non-member");
-			request.getSession(true).setAttribute("user", user);
-		}
-		System.out.println("user_id : " + ( (User)request.getSession(true).getAttribute("user") ).getUserId());
-		
-		// admin 계정일때 판매상품관리와 상품검색을 구분해서 상품정보를 수정할지 조회할지 구분
-		String menu = request.getParameter("menu");
-
-		// 상품검색 클릭했을때 currentPage는 null이다
-		int currentPage = 1;
-
-		// 판매상품관리 클릭시 searchKeyword, searchCondition 둘 다 null
-		String searchKeyword = CommonUtil.null2str(request.getParameter("searchKeyword"));
-		String searchCondition = CommonUtil.null2str(request.getParameter("searchCondition"));
-
-		// 상품검색 클릭시 null, 검색버튼 클릭시 nullString
-		if (request.getParameter("currentPage") != null && !request.getParameter("currentPage").equals("")) {
-			currentPage = Integer.parseInt(request.getParameter("currentPage"));
-		}
-
-		// 검색정보 페이지 수, 컨디션, 키워드, pageUnit reqeust로 가져온 정보를 searchVO에 넣는다
-		Search searchVO = new Search();
-		searchVO.setCurruntPage(currentPage);
-
-		// 상품명과 상품가격에서 searchKeyword가 문자일때 nullString으로 변환
-		if (!searchCondition.trim().equals("1") && !CommonUtil.parsingCheck(searchKeyword)) {
-			searchKeyword = "";
-		}
-		searchVO.setSearchCondition(searchCondition);
-		searchVO.setSearchKeyword(searchKeyword);
-
-		// page의 세로 사이즈와 가로 사이즈를 web.xml에서 가져와 넣는다
-		int pageSize = Integer.parseInt(getServletContext().getInitParameter("pageSize"));
-		int pageUnit = Integer.parseInt(getServletContext().getInitParameter("pageUnit"));
-		searchVO.setPageSize(pageSize);
-
-		// 가격순으로 display
-		String priceSort = CommonUtil.null2str(request.getParameter("priceSort"));
-		searchVO.setPriceSort(priceSort);
-		System.out.println("searchVO.toString() : " + searchVO.toString());
-
-		// 검색정보를 넣어서 현재 페이지의 list를 가져온다
-		//ProductService service = new ProductServiceImpl();
-		System.out.println("여기는 ListProductAction : " + searchVO.toString());
-		Map<String, Object> map = productServiceImpl.getProductList(searchVO);
-
-		// rssultPage로 paging처리
-		Page resultPage = new Page(currentPage, ((Integer) map.get("count")).intValue(), pageUnit, pageSize);
-		System.out.println("resultPage.toString() : " + resultPage.toString());
-
-		// 검색정보와 검색해서 받은 list를 담는다
-		request.setAttribute("resultPage", resultPage);
-		request.setAttribute("searchVO", searchVO);
-		request.setAttribute("list", map.get("list"));
-		request.setAttribute("count", ((List<Product>)map.get("list")).size() );
-		request.setAttribute("menu", menu);
-
-		System.out.println("[ListProductAction execute() end...]");
-		return "forward:/product/listProduct.jsp";
+	@RequestMapping("/addProductView.do")
+	public String addProductView() throws Exception {
+		System.out.println("/addProductView.do");
+		return "redirect:/product/addProductView.jsp";
 	}
-	*/
+	
+	@RequestMapping("/addProduct.do")
+	public String addProduct(@ModelAttribute("productVO") Product productVO, Model model) throws Exception {
+		System.out.println("/addProduct.do");
+		
+		productVO = productServiceImpl.addProduct(productVO);
+		model.addAttribute("productVO", productVO);
+		
+		return "forward:/product/addProduct.jsp";
+	}
+	
+	@RequestMapping("/getProduct.do")
+	public String getProduct(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
+		System.out.println("/getProduct.do");
+		
+		model.addAttribute("productVO", productServiceImpl.getProduct(prodNo));
+		
+		return "forward:/product/getProduct.jsp";
+	}
+	
+	@RequestMapping("/updateProductView.do")
+	public String updateProductView(@RequestParam("menu") String menu, @RequestParam("prodNo") int prodNo, Model model) throws Exception {
+		System.out.println("/updateProductView.do");
+		
+		Product productVO = productServiceImpl.getProduct(prodNo);
+		model.addAttribute("productVO", productVO);
+		System.out.println(productVO);
+		
+		if( menu.equals("manage") && productVO.getProTranCode() == null ) {
+			return "forward:/product/updateProductView.jsp";
+		}else {
+			return "forward:/product/getProduct.jsp";
+		}
+	}
+	
+	@RequestMapping("/updateProduct.do")
+	public String updateProduct(@ModelAttribute("productVO") Product productVO, Model model) throws Exception {
+		System.out.println("/updateProduct.do");
+		
+		model.addAttribute("productVO", productServiceImpl.updateProduct(productVO));
+		
+		return "forward:/product/getProduct.jsp";
+	}
 
 }

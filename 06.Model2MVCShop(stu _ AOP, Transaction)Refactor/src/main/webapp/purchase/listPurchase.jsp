@@ -64,7 +64,7 @@
 		<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
 			<tr class="ct_list_pop">
 				<td align="center">
-					<a href="/getPurchase.do?tranNo=${ list[i].tranNo }">${ size-i }</a>
+					<a href="/getPurchaseFromTranId.do?tranId=${ list[i].tranId }">${ size-i }</a>
 				</td>
 				<td></td>
 				<td align="left">

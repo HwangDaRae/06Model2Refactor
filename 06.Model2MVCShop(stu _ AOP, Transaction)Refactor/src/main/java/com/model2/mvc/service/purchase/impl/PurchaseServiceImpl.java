@@ -40,6 +40,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 	}
 
 	@Override
+	public List<Purchase> getPurchaseFromTranId(String tranId) throws Exception {
+		System.out.println("PurchaseServiceImpl getPurchaseFromTranId(int tranId) start...");
+		return purchaseDao.getPurchaseFromTranId(tranId);
+	}
+
+	@Override
 	public List<Purchase> getListPurchase(String tranId) throws Exception {
 		return purchaseDao.getListPurchase(tranId);
 	}

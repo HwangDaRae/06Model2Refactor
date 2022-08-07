@@ -21,7 +21,11 @@
 		<td></td>
 		<td align="left">${ list[i].purchaseProd.prodDetail }</td>
 		<td></td>
+		<td align="left">${ list[i].purchaseProd.price }개</td>
+		<td></td>
 		<td align="left">${ list[i].amount }개</td>
+		<td></td>
+		<td align="left">${ list[i].purchaseProd.price * list[i].amount }개</td>
 	</tr>
 </table>
 </c:forEach>
@@ -72,8 +76,8 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>수량</td>
-		<td>${ list[0].amount }<%-- ${ purchaseVO.amount } --%></td>
+		<td>총 가격</td>
+		<td>${ list[0].totalPrice }<%-- ${ purchaseVO.totalPrice } --%></td>
 		<td></td>
 	</tr>
 </table>
