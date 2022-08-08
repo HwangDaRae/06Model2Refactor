@@ -21,7 +21,5 @@ public interface PurchaseDao {
 	public Purchase updatePurchase(Purchase purchaseVO) throws Exception;
 	
 	public void updateTranCode(Map<String, Object> map) throws Exception;
-	
-	public List<Purchase> getListPurchase(String tranId) throws Exception;
 
 }

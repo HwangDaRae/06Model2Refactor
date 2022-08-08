@@ -58,7 +58,9 @@
   	
   	
   	<select id="findPurchaseFromTranId" parameterType="string" resultMap="purchaseSelectMap">
-  		SELECT * FROM transaction WHERE tran_id=#{value}
+  		SELECT t.prod_no, p.image_file, p.prod_name, p.prod_detail, p.price, t.buyer_id, t.amount, t.tran_id, t.payment_option, t.receiver_name, t.receiver_phone, t.demailaddr, t.dlvy_request, t.dlvy_date, t.total_price
+		FROM product p, transaction t
+		WHERE p.prod_no = t.prod_no AND t.tran_id=#{value}
   	</select>
 
 

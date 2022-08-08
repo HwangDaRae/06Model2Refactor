@@ -25,7 +25,7 @@ function purchaseFinish(){
 
 <body bgcolor="#ffffff" text="#000000">
 	<div style="width: 98%; margin-left: 10px;">
-		<form name="detailForm" action="/addPurchase.do" method="post">
+		<form name="detailForm" action="/addCartPurchase.do" method="post">
 			<table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="15" height="37"><img src="/images/ct_ttl_img01.gif" width="15" height="37" /></td>
@@ -64,13 +64,13 @@ function purchaseFinish(){
 					<td colspan="11" bgcolor="808285" height="1"></td>
 				</tr>
 					<!-- list시작 -->
-					<c:set var="size" value="<%-- ${ fn:length(purList) } --%>${ count }"/>
-					<c:if test="<%-- ${ fn:length(purList) > 0 } --%>${ count > 0 }">
+					<c:set var="size" value="${ fn:length(purList) }"/>
+					<c:if test="${ fn:length(purList) > 0 }">
 						<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
 						
 							<input type="text" name="productNo" value="${ purList[i].purchaseProd.prodNo }">
-							<input type="text" name="amount" value="${ purList[i].amount }">
-						
+							<input type="text" name="amountArr" value="${ purList[i].amount }">
+							
 							<tr class="ct_list_pop" id="divDataId">
 								<td align="center"><img height="250" width="250" src="/images/uploadFiles/${ purList[i].purchaseProd.fileName }"/></td>
 								<td></td>
@@ -124,7 +124,7 @@ function purchaseFinish(){
 					<td width="104" class="ct_write">구매자주소</td>
 					<td bgcolor="D6D6D6" width="1"></td>
 					<td class="ct_write01">
-						<input 	type="text" name="receiverAddr" class="ct_input_g" 
+						<input 	type="text" name="divyAddr" class="ct_input_g" 
 										style="width: 100px; height: 19px" maxLength="20" />
 					</td>
 				</tr>
@@ -135,7 +135,7 @@ function purchaseFinish(){
 					<td width="104" class="ct_write">구매요청사항</td>
 					<td bgcolor="D6D6D6" width="1"></td>
 					<td class="ct_write01">
-						<input type="text" name="receiverRequest" class="ct_input_g" style="width: 100px; height: 19px" maxLength="20" />
+						<input type="text" name="divyRequest" class="ct_input_g" style="width: 100px; height: 19px" maxLength="20" />
 					</td>
 				</tr>
 				<tr>
@@ -148,7 +148,7 @@ function purchaseFinish(){
 						<input type="text" name="divyDate" class="ct_input_g"
 							style="width: 100px; height: 19px" maxLength="20"/>
 							<img src="../images/ct_icon_date.gif" width="15" height="15"
-							onclick="show_calendar('document.updatePurchase.divyDate', document.updatePurchase.divyDate.value)"/>
+							onclick="show_calendar('document.detailForm.divyDate', document.detailForm.divyDate.value)"/>
 					</td>
 				</tr>
 				<tr>

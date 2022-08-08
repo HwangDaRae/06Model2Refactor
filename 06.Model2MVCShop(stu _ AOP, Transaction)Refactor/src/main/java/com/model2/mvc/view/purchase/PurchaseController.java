@@ -116,86 +116,113 @@ public class PurchaseController {
         	tranId = tranId.replace(String.valueOf(c), "");
         }
         //20220803163216
-
 		System.out.println("purchaseVO.toString() defore : " + purchaseVO.toString());
 		
-        if(prodNo != 0) {
-        	// 상세정보보기에서 구매
+		
+		
+    	// 상세정보보기에서 구매
+		// 주문번호 넣기
+		purchaseVO.setTranId(tranId);
+    	//상세정보에서 상품정보
+    	productVO = productServiceImpl.getProduct(prodNo);
+    	purchaseVO.setPurchaseProd(productVO);        	
+    	// 상세정보에서 유저정보
+		purchaseVO.setBuyer((User)session.getAttribute("user"));
+		// 구매한 상품의 수량정보
+		purchaseVO.setAmount(amount[0]);			
+		// 구매한 상품의 totalPrice
+		purchaseVO.setTotalPrice(amount[0] * productVO.getPrice());
+
+		// 상품 수량 -= 구매한 수량
+		productVO.setAmount(productVO.getAmount() - amount[0]);
+		productServiceImpl.updateProduct(productVO);
+
+		// 재고상품수량과 구매정보를 PurchaseVO에 넣는다
+		purchaseVO = purchaseServiceImpl.addPurchase(purchaseVO, productVO);
+		System.out.println("purchaseVO.toString() after : " + purchaseVO.toString());
+
+		list.add(purchaseVO);
+		
+		
+
+		model.addAttribute("list", list);
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("/purchase/addPurchase.jsp");
+		modelAndView.addObject("model", model);
+		return modelAndView;
+	}
+	
+	@RequestMapping("/addCartPurchase.do")
+	public ModelAndView addCartPurchase(@ModelAttribute("purchaseVO") Purchase purchaseVO, @RequestParam("amountArr") int[] amountArr, @RequestParam("productNo") int productNo[], HttpSession session, Model model) throws Exception {
+		System.out.println("/addCartPurchase.do");
+
+		List<Purchase> list = new ArrayList<Purchase>();
+		List<Product> prodList = new ArrayList<Product>();
+		Product productVO = new Product();
+		
+		//주문번호에 넣은 식별성있는 값
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
+		String tranId = sdf1.format( Calendar.getInstance().getTime() ) + "";
+		// 2022-08-03 16:32:16
+        String charsToRemove = "- :";
+        for (char c : charsToRemove.toCharArray()) {
+        	tranId = tranId.replace(String.valueOf(c), "");
+        }
+        //20220803163216
+		System.out.println("purchaseVO.toString() defore : " + purchaseVO.toString());
+		
+		
+		int totalPrice = 0;
+		// 장바구니에서 구매
+    	// 배열로 온 상품번호와 상품수량 출력
+		for (int i = 0; i < productNo.length; i++) {
+			System.out.println("상품번호 : " + productNo[i] + ", 상품수량 : " + amountArr[i]);
+			System.out.println("구매정보 : " + purchaseVO);
+			
 			// 주문번호 넣기
 			purchaseVO.setTranId(tranId);
-        	//상세정보에서 상품정보
-        	productVO = productServiceImpl.getProduct(prodNo);
-        	purchaseVO.setPurchaseProd(productVO);        	
-        	// 상세정보에서 유저정보
-			purchaseVO.setBuyer((User)session.getAttribute("user"));
+			// 상품정보 가져오기
+			productVO = productServiceImpl.getProduct(productNo[i]);
+			purchaseVO.setPurchaseProd(productVO);
+			// 유저정보 가져오기
+			User user = new User();
+			user.setUserId( ((User)session.getAttribute("user")).getUserId() );
+			purchaseVO.setBuyer(user);
 			// 구매한 상품의 수량정보
-			purchaseVO.setAmount(amount[0]);			
-			// 구매한 상품의 totalPrice
-			purchaseVO.setTotalPrice(amount[0] * productVO.getPrice());
-
-			// 상품 수량 -= 구매한 수량
-			productVO.setAmount(productVO.getAmount() - amount[0]);
-			productServiceImpl.updateProduct(productVO);
+			purchaseVO.setAmount(amountArr[i]);
+			
+			// 상품수량 = 상품수량 - 구매수량
+			productVO.setAmount(productVO.getAmount() - amountArr[i]);
+			productServiceImpl.updateProduct(productVO);	
 
 			// 재고상품수량과 구매정보를 PurchaseVO에 넣는다
-			purchaseVO = purchaseServiceImpl.addPurchase(purchaseVO, productVO);
-			System.out.println("purchaseVO.toString() after : " + purchaseVO.toString());
+			purchaseServiceImpl.addPurchase(purchaseVO, productVO);
 
-			list.add(purchaseVO);
+			Map<String, Object> map = new HashMap<String, Object>();
+			// 장바구니에서 삭제
+			map.put("user_id", ((User)session.getAttribute("user")).getUserId());
+			map.put("deleteArray", productNo);
+			cartServiceImpl.deleteCart(map);
 
-			model.addAttribute("list", list);
-        }else {
-			// 장바구니에서 구매
-        	// 배열로 온 상품번호와 상품수량 출력
-        	/*
-			for (int i = 0; i < productNo.length; i++) {
-				System.out.println("상품번호 : " + productNo[i] + ", 상품수량 : " + amount[i]);
-				System.out.println("구매정보 : " + purchaseVO);
-				
-				// 주문번호 넣기
-				purchaseVO.setTranId(tranId);
-				// 상품정보 가져오기
-				System.out.println("000");
-				productVO = productServiceImpl.getProduct(productNo[i]);
-				System.out.println("111");
-				purchaseVO.setPurchaseProd(productVO);
-				// 유저정보 가져오기
-				purchaseVO.getBuyer().setUserId(((User)session.getAttribute("user")).getUserId());
-				// 구매한 상품의 수량정보
-				purchaseVO.setAmount(amount[i]);
-				
-				// 상품수량 = 상품수량 - 구매수량
-				productVO.setAmount(productVO.getAmount() - amount[i]);
-				System.out.println("222");
-				productServiceImpl.updateProduct(productVO);	
-				System.out.println("333");			
-
-				// 재고상품수량과 구매정보를 PurchaseVO에 넣는다
-				System.out.println("444");
-				purchaseVO = purchaseServiceImpl.addPurchase(purchaseVO, productVO);
-				System.out.println("555");
-				System.out.println("purchaseVO.toString() : " + purchaseVO.toString());
-
-				list.add(purchaseVO);
-
-				Map<String, Object> map = new HashMap<String, Object>();
-				// 장바구니에서 삭제
-				map.put("user_id", ((User)session.getAttribute("user")).getUserId());
-				map.put("deleteArray", productNo);
-				System.out.println("666");
-				cartServiceImpl.deleteCart(map);
-				System.out.println("777");
-
-				//@RequestParam 으로 온 data가 있다 마지막에 다시 생성 Call by Reference
-				purchaseVO = new Purchase();
-			}
-
-			model.addAttribute("list", list);
-    		for (Purchase purchase : list) {
-    			System.out.println(purchase.toString());
-    		}
-			*/
+			totalPrice += productVO.getPrice() * purchaseVO.getAmount();
         }
+
+		list = purchaseServiceImpl.getPurchaseFromTranId(tranId);
+		for (int i = 0; i < list.size(); i++) {
+			Product p = new Product();
+			list.get(i).setTotalPrice(totalPrice);			
+			p = productServiceImpl.getProduct(list.get(i).getPurchaseProd().getProdNo());
+			prodList.add(p);
+		}
+		
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i).toString());
+			System.out.println(prodList.get(i).toString());
+		}
+		
+		model.addAttribute("list", list);
+		model.addAttribute("prodList", prodList);
 		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("/purchase/addPurchase.jsp");
@@ -327,7 +354,7 @@ public class PurchaseController {
 		System.out.println("/getNonMemPurchase.do");
 		
 		//비회원 주문조회
-		List<Purchase> purList = purchaseServiceImpl.getListPurchase(tranId);		
+		List<Purchase> purList = purchaseServiceImpl.getPurchaseFromTranId(tranId);
 		List<Product> proList = new ArrayList<Product>();
 		for (int i = 0; i < purList.size(); i++) {
 			Product vo = productServiceImpl.getProduct(purList.get(i).getPurchaseProd().getProdNo());

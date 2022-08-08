@@ -29,7 +29,7 @@ public class PurchaseDaoImpl implements PurchaseDao {
 		System.out.println("PurchaseDAOImpl addPurchase(Purchase purchaseVO, Product productVO)");
 		int i = sqlSession.insert("PurchaseMapper.addPurchase", purchase);
 		if(i==1) {
-			return (Purchase)sqlSession.selectList("PurchaseMapper.findPurchase", purchase.getTranNo());
+			return (Purchase)sqlSession.selectOne("PurchaseMapper.findPurchase", purchase.getTranNo());
 		}else {
 			return null;
 		}
@@ -72,12 +72,6 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	@Override
 	public void updateTranCode(Map<String, Object> map) throws Exception {
 		sqlSession.update("PurchaseMapper.updateTranCode", map);
-	}
-
-	@Override
-	public List<Purchase> getListPurchase(String tranId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

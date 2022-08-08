@@ -12,20 +12,20 @@
 
 다음과 같이 구매가 되었습니다.
 
-<c:forEach var="i" begin="0" end="${ fn:length(list) -1 }" step="1">
+<c:forEach var="i" begin="0" end="${ fn:length(prodList) -1 }" step="1">
 <table border=1>
 	<tr class="ct_list_pop" id="divDataId">
-		<td align="center"><img height="250" width="250" src="/images/uploadFiles/${ list[i].purchaseProd.fileName }"/></td>
+		<td align="center"><img height="250" width="250" src="/images/uploadFiles/${ prodList[i].fileName }"/></td>
 		<td></td>
-		<td align="left">${ list[i].purchaseProd.prodName }</td>
+		<td align="left">${ prodList[i].prodName }</td>
 		<td></td>
-		<td align="left">${ list[i].purchaseProd.prodDetail }</td>
+		<td align="left">${ prodList[i].prodDetail }</td>
 		<td></td>
-		<td align="left">${ list[i].purchaseProd.price }개</td>
+		<td align="left">${ prodList[i].price }개</td>
 		<td></td>
 		<td align="left">${ list[i].amount }개</td>
 		<td></td>
-		<td align="left">${ list[i].purchaseProd.price * list[i].amount }개</td>
+		<td align="left">${ prodList[i].price * list[i].amount }원</td>
 	</tr>
 </table>
 </c:forEach>
@@ -77,7 +77,7 @@
 	</tr>
 	<tr>
 		<td>총 가격</td>
-		<td>${ list[0].totalPrice }<%-- ${ purchaseVO.totalPrice } --%></td>
+		<td>${ list[0].totalPrice }원<%-- ${ purchaseVO.totalPrice } --%></td>
 		<td></td>
 	</tr>
 </table>

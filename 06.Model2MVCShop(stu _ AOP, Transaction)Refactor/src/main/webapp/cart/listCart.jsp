@@ -150,7 +150,7 @@ function cartTransaction(){
 								<td align="center">
 								<%-- <c:if test="${ list[i].prod_amount != 0 }"> --%>
 								<c:if test="${ count > 0 }">
-								<input type="checkbox" onclick="ischecked()" id="deleteCheckBox" name="deleteCheckBox" value="<%-- ${ list[i].prod_no } --%>"></td>
+								<input type="checkbox" onclick="ischecked()" id="deleteCheckBox" name="deleteCheckBox" value="${ list[i].prod_no }"></td>
 								</c:if>
 								<td></td>
 								<td align="left"><img height="250" width="250" src="/images/uploadFiles/${ list[i].image }"/></td>

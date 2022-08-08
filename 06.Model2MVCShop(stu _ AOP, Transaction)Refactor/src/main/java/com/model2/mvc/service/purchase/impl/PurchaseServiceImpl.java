@@ -46,11 +46,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 	}
 
 	@Override
-	public List<Purchase> getListPurchase(String tranId) throws Exception {
-		return purchaseDao.getListPurchase(tranId);
-	}
-
-	@Override
 	public int totalCountPurchaseList(String userId) throws Exception {
 		return purchaseDao.totalCountPurchaseList(userId);
 	}

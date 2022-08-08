@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.model2.mvc.framework.Action;
 import com.model2.mvc.service.cart.CartService;
-import com.model2.mvc.service.cart.impl.CartServiceImpl;
 import com.model2.mvc.service.domain.Cart;
 import com.model2.mvc.service.domain.Product;
+import com.model2.mvc.service.domain.Purchase;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
 import com.model2.mvc.service.product.impl.ProductServiceImpl;
@@ -166,7 +165,182 @@ public class CartController {
 		modelAndView.addObject("model", model);
 		return modelAndView;
 	}
+	
+	@RequestMapping("/deliveryCart.do")
+	public ModelAndView deliveryCart(@RequestParam("addPurchaseCheckBox") int[] allProdNo, @RequestParam("deleteCheckBox") int[] checkProdNo, @RequestParam("amount") int[] allAmount,
+			HttpSession session, User user, Model model) throws Exception {
+		System.out.println("/deliveryCart.do");
+		//allAmount => 모든 수량, allCheckProdNo => 모든 상품번호, checkedProdNo => 체크된 상품번호
+		//구매 페이지에서 받은 모든 체크박스와 체크된 체크박스를 비교해서 index를 알아낸다 그 index에 맞는 상품번호, 수량을 보낸다
+		List<Purchase> purList = new ArrayList<Purchase>();
+		Product productVO = new Product();
 
+		for (int i = 0; i < allProdNo.length; i++) {
+			for (int j = 0; j < checkProdNo.length; j++) {
+				if(checkProdNo[j] == allProdNo[i]) {
+					Purchase purchaseVO = new Purchase();
+					System.out.println("상품번호 : " + checkProdNo[i]);
+					System.out.println("수량 : " + allAmount[i]);
+					
+					//구매할 상품정보
+					productVO = productServiceImpl.getProduct(checkProdNo[i]);
+					purchaseVO.setPurchaseProd(productVO);
+					
+					//구매한 유저정보
+					user.setUserId( ((User)session.getAttribute("user")).getUserId() );
+					purchaseVO.setBuyer(user);
+					
+					//구매한 상품의 수량정보
+					purchaseVO.setAmount(allAmount[i]);
+					
+					purList.add(purchaseVO);
+				}
+			}
+		}
+		
+		for (int i = 0; i < purList.size(); i++) {
+			System.out.println("purList : " + purList.get(i));
+		}
+		
+		model.addAttribute("purList", purList);
+		model.addAttribute("count", purList.size());
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("/cart/deliveryCart.jsp");
+		modelAndView.addObject("model", model);
+		return modelAndView;
+	}
+	
+	@RequestMapping("/deleteCart.do")
+	public ModelAndView deleteCart( @RequestParam("deleteCheckBox") int[] deleteArr, HttpSession session, HttpServletRequest request, Model model) throws Exception {
+		System.out.println("/deleteCart.do");
+
+		User user = (User)session.getAttribute("user");
+		
+		//1개 or 여러개 삭제시
+		for (int i = 0; i < deleteArr.length; i++) {
+			System.out.println("삭제할 상품 번호 : " + deleteArr[i]);
+		}
+		
+		if(user == null || user.getUserId().equals("non-member")) {
+			// 비회원이라면
+			String allInfo = "";
+			
+			Cookie[] cookies = request.getCookies();
+			if(cookies != null && cookies.length > 0) {
+				for (int i = 0; i < cookies.length; i++) {
+					if(cookies[i].getName().equals("prodInfoCookie")) {
+						allInfo = URLDecoder.decode(cookies[i].getValue());
+					}
+				}
+			}
+			
+			String testStr = "10001:2,10003:5,10007:12";
+			int testIndex = testStr.indexOf("10003");
+			System.out.println("return된 index : " + testIndex);
+			
+			// , 전까지 자른다 , 가 없다면 index부터 끝까지 자른다
+			
+			//request.setAttribute("list", map.get("list"));
+			//count : 게시물 수, listCart.jsp에서 count>0일때 for문으로 list출력
+			//request.setAttribute("count", map.get("count"));
+		}else {
+			//회원이라면
+			Map<String, Object> map = new HashMap<String, Object>();
+			
+			//삭제할 상품번호와 user_id를 map에 넣는다
+			map.put("deleteArray", deleteArr);
+			map.put("user_id", ( (User)session.getAttribute("user") ).getUserId() );
+
+			//장바구니에서 상품을 삭제하고 삭제한 list를 가져온다
+			cartServiceImpl.deleteCart(map);
+			List<Cart> list = cartServiceImpl.getCartList( ( (User)session.getAttribute("user") ).getUserId() );
+			
+			model.addAttribute("list", list);
+			//count : 게시물 수, listCart.jsp에서 count>0일때 for문으로 list출력
+			model.addAttribute("count", list.size());
+		}
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("/cart/listCart.jsp");
+		modelAndView.addObject("model", model);
+		
+		return modelAndView;
+	}
+	
+	@RequestMapping("/listCart.do")
+	public ModelAndView listCart(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model) throws Exception {
+		System.out.println("/listCart.do");
+		//left.jsp 레이어에 있는 장바구니 <a href 클릭시 유저에 맞는 장바구니 리스트로 이동
+		User user = (User)session.getAttribute("user");
+		System.out.println(user.getUserId());
+		
+		if(user.getUserId().equals("non-member")) {
+			System.out.println("여기는 user.getUserId == non-member");
+			
+			Cookie[] cookies = request.getCookies();
+			
+			List<Product> proList = new ArrayList<Product>();
+			String[] prodNoAndAmount = null;
+			int[] prodNoArr;
+			int[] amountArr;
+			int index = 0;
+			
+			if(cookies != null && cookies.length > 0) {
+				for (int i = 0; i < cookies.length; i++) {
+					if(cookies[i].getName().equals("prodInfoCookie")) {
+						//상품번호와 수량에 맞는 상품정보를 가져온다
+						index = i;
+					}
+				}
+
+				System.out.println("index : " + index);
+				System.out.println("prodInfoCookie로 찾은 cookie value : " + URLDecoder.decode(cookies[index].getValue()));
+				prodNoAndAmount = URLDecoder.decode(cookies[index].getValue()).split(",");
+				//10001:1
+				//10022:31
+				//10013:12
+				
+				for (int i = 0; i < prodNoAndAmount.length; i++) {
+					System.out.println("파싱한 상품번호 and 수량 : " + prodNoAndAmount[i]);
+				}
+			}
+			
+			for (int i = 0; i < proList.size(); i++) {
+				System.out.println("proList : " + proList.get(i).toString());
+			}
+			
+			model.addAttribute("list", proList);
+			model.addAttribute("count", proList.size());
+		}else {
+			List<Cart> list = new ArrayList<Cart>();
+			System.out.println("여기는 회원 장바구니 리스트");
+			list = cartServiceImpl.getCartList(user.getUserId());
+			
+			for (int i = 0; i < list.size(); i++) {
+				System.out.println(list.get(i).toString());
+			}
+			
+			model.addAttribute("list", list);
+			//count : 게시물 수, listCart.jsp에서 count>0일때 for문으로 list출력
+			model.addAttribute("count", list.size());
+		}
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("/cart/listCart.jsp");
+		modelAndView.addObject("model", model);
+		
+		return modelAndView;
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	
 	/*
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {

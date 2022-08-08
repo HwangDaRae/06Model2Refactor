@@ -44,7 +44,7 @@ public class LogonCheckInterceptor extends HandlerInterceptorAdapter {
 		System.out.println(handler);
 
 		// ==> 로그인한 회원이라면...
-		if ( !((User)session.getAttribute("user")).getUserId().equals("non-member")) {
+		if (!((User)session.getAttribute("user")).getUserId().equals("non-member")) {
 			// ==> 로그인 상태에서 접근 불가 URI
 			System.out.println("여기는 회원 관리자");
 			String uri = request.getRequestURI();
@@ -66,7 +66,7 @@ public class LogonCheckInterceptor extends HandlerInterceptorAdapter {
 				System.out.println("[ 로그 시도 상태 .... ]");
 				System.out.println("[ LogonCheckInterceptor end........]\n");
 				return true;
-			}else if(uri.indexOf("listProduct") != -1 || uri.indexOf("getProduct") != -1 || uri.indexOf("addCart") != -1) {
+			}else if(uri.indexOf("listProduct") != -1 || uri.indexOf("getProduct") != -1 || uri.indexOf("addCart") != -1 || uri.indexOf("/listCart.do") != -1) {
 				System.out.println("[ 비회원 ]");
 				return true;
 			}
